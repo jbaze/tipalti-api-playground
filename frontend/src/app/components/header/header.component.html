@@ -1,0 +1,23 @@
+<header class="header">
+  <div class="header-content">
+    <div class="header-top">
+      <div class="brand">
+        <h1 class="brand-title">Tipalti</h1>
+        <span class="brand-badge">API Playground</span>
+      </div>
+
+      <div class="header-right" *ngIf="authService.isLoggedIn()">
+        <div class="user-info">
+          <span class="user-email">{{ authService.userEmail() }}</span>
+          <button class="btn-logout" (click)="logout()">
+            <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
