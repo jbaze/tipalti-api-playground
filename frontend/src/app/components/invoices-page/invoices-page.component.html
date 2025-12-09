@@ -1,0 +1,406 @@
+<div class="playground-container">
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header-content">
+      <!-- Branding -->
+      <div class="brand">
+        <div class="header-top">
+          <div class="header-left">
+            <p class="header-label">Developer Exercise</p>
+            <p class="header-accent">Full-Stack Mock API</p>
+          </div>
+        </div>
+
+        <!-- Page Title -->
+        <h2 class="page-title">Invoices API Playground</h2>
+      </div>
+
+      <!-- Authentication Configuration -->
+      <div class="auth-config">
+        <div class="auth-row">
+          <label class="auth-label">API Key:</label>
+          <input
+            [type]="showApiKey() ? 'text' : 'password'"
+            [value]="apiKeyDisplay()"
+            (input)="onApiKeyChange($event)"
+            placeholder="Enter your API key"
+            class="auth-input"
+          />
+          <button class="btn-show" (click)="toggleApiKeyVisibility()">
+            {{ showApiKey() ? 'Hide' : 'Show' }}
+          </button>
+          <button class="btn-copy-key" (click)="copyApiKey()">
+            @if (apiKeyCopied()) {
+              <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              Copied
+            } @else {
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Copy
+            }
+          </button>
+        </div>
+        <p class="auth-note">
+          <svg class="icon-info" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          Authentication is mocked for demonstration purposes
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-grid">
+      <!-- Left Column - API Operations -->
+      <div class="operations-column">
+        <!-- GET Invoices Card -->
+        <div class="api-card">
+          <!-- Card Header -->
+          <div class="card-header card-header-blue">
+            <div class="endpoint-row">
+              <span class="method-badge method-get">GET</span>
+              <code class="endpoint-url">https://api.tipalti.com/api/v1/invoices</code>
+            </div>
+            <h3 class="card-title">Retrieve Invoices</h3>
+            <p class="card-subtitle">Returns a list of invoice reference codes from your Tipalti account</p>
+          </div>
+
+          <!-- Documentation Section -->
+          <div class="card-docs">
+            <h4 class="docs-heading">Description</h4>
+            <p class="docs-text">
+              This endpoint retrieves invoice reference codes. You can optionally filter results using query parameters.
+            </p>
+
+            <h4 class="docs-heading">Available Query Parameters</h4>
+            <div class="params-list">
+              <div class="param-item">
+                <code class="param-code">count</code>
+                <span class="param-desc">Number of results to return (1-100, default: 3)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Query Parameters Input -->
+          <div class="card-inputs">
+            <h4 class="inputs-heading">Query Parameters</h4>
+            <div class="input-group">
+              <label class="input-label">
+                count <span class="optional-text">(optional)</span>
+              </label>
+              <input
+                type="number"
+                [(ngModel)]="getCount"
+                placeholder="3"
+                min="1"
+                max="100"
+                class="param-input"
+              />
+              <p class="input-hint">Number of results to return (1-100, default: 3)</p>
+            </div>
+          </div>
+
+          <!-- Headers Display -->
+          <div class="card-headers">
+            <h4 class="headers-heading">Request Headers</h4>
+            <div class="headers-list">
+              <div class="header-item">
+                <span class="header-name">Authorization</span>
+                <span class="header-value">Bearer ey****</span>
+              </div>
+              <div class="header-item">
+                <span class="header-name">Accept</span>
+                <span class="header-value">application/json</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="card-action">
+            <button class="btn-send" (click)="executeGet()" [disabled]="getLoading()">
+              {{ getLoading() ? 'Sending Request...' : 'Send Request' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- PUT Invoices Card -->
+        <div class="api-card">
+          <!-- Card Header -->
+          <div class="card-header card-header-orange">
+            <div class="endpoint-row">
+              <span class="method-badge method-put">PUT</span>
+              <code class="endpoint-url">https://api.tipalti.com/api/v1/invoices</code>
+            </div>
+            <h3 class="card-title">Create or Update Invoice</h3>
+            <p class="card-subtitle">Submit invoice data to create new or update existing invoices</p>
+          </div>
+
+          <!-- Documentation Section -->
+          <div class="card-docs">
+            <h4 class="docs-heading">Description</h4>
+            <p class="docs-text">
+              This endpoint accepts invoice data in JSON format. The request must include a payer name and an array of invoice objects.
+            </p>
+
+            <h4 class="docs-heading">Required Fields</h4>
+            <div class="params-list">
+              <div class="param-item">
+                <code class="param-code">PayerName</code>
+                <span class="param-desc">Name of the payer organization</span>
+              </div>
+              <div class="param-item">
+                <code class="param-code">Invoices</code>
+                <span class="param-desc">Array of invoice objects</span>
+              </div>
+              <div class="param-item">
+                <code class="param-code">RefCode</code>
+                <span class="param-desc">Unique reference code for each invoice</span>
+              </div>
+              <div class="param-item">
+                <code class="param-code">InvoiceLines</code>
+                <span class="param-desc">Array of line items with amounts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monaco Editor -->
+          <div class="editor-section">
+            <div class="editor-header">
+              <div class="editor-header-left">
+                <span class="language-badge">JSON</span>
+                <span class="editor-label">Request Body</span>
+              </div>
+              <div class="editor-header-right">
+                <button class="btn-editor" (click)="copyRequestBody()">
+                  @if (requestBodyCopied()) {
+                    <svg class="icon-small" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Copied
+                  } @else {
+                    <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy
+                  }
+                </button>
+                <button class="btn-editor" (click)="formatJson()">
+                  <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  Format
+                </button>
+              </div>
+            </div>
+            <div #editorContainer class="monaco-container"></div>
+          </div>
+
+          <!-- Headers Display -->
+          <div class="card-headers">
+            <h4 class="headers-heading">Request Headers</h4>
+            <div class="headers-list">
+              <div class="header-item">
+                <span class="header-name">Authorization</span>
+                <span class="header-value">Bearer ey****</span>
+              </div>
+              <div class="header-item">
+                <span class="header-name">Content-Type</span>
+                <span class="header-value">application/json</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="card-action">
+            <button class="btn-send" (click)="executePut()" [disabled]="putLoading()">
+              {{ putLoading() ? 'Sending Request...' : 'Send Request' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- POST Invoices Card -->
+        <div class="api-card">
+          <!-- Card Header -->
+          <div class="card-header card-header-green">
+            <div class="endpoint-row">
+              <span class="method-badge method-post">POST</span>
+              <code class="endpoint-url">https://api.tipalti.com/api/v1/invoices</code>
+            </div>
+            <h3 class="card-title">Create Invoice</h3>
+            <p class="card-subtitle">Create a new invoice in the system</p>
+          </div>
+
+          <!-- Documentation Section -->
+          <div class="card-docs">
+            <h4 class="docs-heading">Description</h4>
+            <p class="docs-text">
+              This endpoint creates a new invoice. The request must include payer information and invoice details. Returns the created invoice ID on success.
+            </p>
+
+            <h4 class="docs-heading">Required Fields</h4>
+            <div class="params-list">
+              <div class="param-item">
+                <code class="param-code">PayerName</code>
+                <span class="param-desc">Name of the payer organization</span>
+              </div>
+              <div class="param-item">
+                <code class="param-code">Invoices</code>
+                <span class="param-desc">Array with at least one invoice object</span>
+              </div>
+              <div class="param-item">
+                <code class="param-code">RefCode</code>
+                <span class="param-desc">Unique reference code (alphanumeric with hyphens)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monaco Editor for POST -->
+          <div class="editor-section">
+            <div class="editor-header">
+              <div class="editor-header-left">
+                <span class="language-badge">JSON</span>
+                <span class="editor-label">Request Body</span>
+              </div>
+              <div class="editor-header-right">
+                <button class="btn-editor" (click)="copyPostRequestBody()">
+                  @if (postRequestBodyCopied()) {
+                    <svg class="icon-small" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Copied
+                  } @else {
+                    <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copy
+                  }
+                </button>
+                <button class="btn-editor" (click)="formatPostJson()">
+                  <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  Format
+                </button>
+              </div>
+            </div>
+            <div #postEditorContainer class="monaco-container"></div>
+          </div>
+
+          <!-- Headers Display -->
+          <div class="card-headers">
+            <h4 class="headers-heading">Request Headers</h4>
+            <div class="headers-list">
+              <div class="header-item">
+                <span class="header-name">Authorization</span>
+                <span class="header-value">Bearer ey****</span>
+              </div>
+              <div class="header-item">
+                <span class="header-name">Content-Type</span>
+                <span class="header-value">application/json</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="card-action">
+            <button class="btn-send" (click)="executePost()" [disabled]="postLoading()">
+              {{ postLoading() ? 'Creating Invoice...' : 'Create Invoice' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- DELETE Invoice Card -->
+        <div class="api-card">
+          <!-- Card Header -->
+          <div class="card-header card-header-red">
+            <div class="endpoint-row">
+              <span class="method-badge method-delete">DELETE</span>
+              <code class="endpoint-url">https://api.tipalti.com/api/v1/invoices/:refCode</code>
+            </div>
+            <h3 class="card-title">Delete Invoice</h3>
+            <p class="card-subtitle">Remove an invoice from the system by its reference code</p>
+          </div>
+
+          <!-- Documentation Section -->
+          <div class="card-docs">
+            <h4 class="docs-heading">Description</h4>
+            <p class="docs-text">
+              This endpoint deletes an existing invoice by its reference code. This action is irreversible. Returns success confirmation or error details.
+            </p>
+
+            <h4 class="docs-heading">Path Parameters</h4>
+            <div class="params-list">
+              <div class="param-item">
+                <code class="param-code">refCode</code>
+                <span class="param-desc">The unique reference code of the invoice to delete</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RefCode Input -->
+          <div class="card-inputs">
+            <h4 class="inputs-heading">Path Parameter</h4>
+            <div class="input-group">
+              <label class="input-label">
+                refCode <span class="required-text">(required)</span>
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="deleteRefCode"
+                placeholder="e.g., INV-2024-001"
+                class="param-input"
+              />
+              <p class="input-hint">The reference code must contain only alphanumeric characters and hyphens</p>
+            </div>
+          </div>
+
+          <!-- Headers Display -->
+          <div class="card-headers">
+            <h4 class="headers-heading">Request Headers</h4>
+            <div class="headers-list">
+              <div class="header-item">
+                <span class="header-name">Authorization</span>
+                <span class="header-value">Bearer ey****</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="card-action">
+            <button class="btn-send btn-delete" (click)="executeDelete()" [disabled]="deleteLoading() || !deleteRefCode">
+              {{ deleteLoading() ? 'Deleting...' : 'Delete Invoice' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Response Panel -->
+      <div class="response-column">
+        <app-response-display 
+          [currentResponse]="currentResponse()"
+          (copyResponseEvent)="copyResponse()"
+        ></app-response-display>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-title">Tipalti API Playground - Developer Exercise</p>
+      <p class="footer-subtitle">Mock API responses for demonstration purposes only</p>
+      <div class="footer-tech">
+        <span>Full-Stack Exercise</span>
+        <span class="footer-dot">•</span>
+        <span>Frontend: Angular + Custom CSS</span>
+        <span class="footer-dot">•</span>
+        <span>Backend: C# .NET Minimal API</span>
+      </div>
+    </div>
+  </footer>
+</div>

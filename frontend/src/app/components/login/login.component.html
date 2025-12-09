@@ -1,0 +1,58 @@
+<div class="login-container">
+      <div class="login-card">
+        <h1>Tipalti Invoice API Playground</h1>
+        <p class="subtitle">Please log in to continue</p>
+
+        @if (errorMessage()) {
+          <div class="error-message">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="email"
+              required
+              placeholder="administrator&#64;localhost"
+              autocomplete="username"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              [(ngModel)]="password"
+              required
+              placeholder="Administrator1!"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="!loginForm.form.valid || isLoading()"
+          >
+            @if (isLoading()) {
+              Logging in...
+            } @else {
+              Log In
+            }
+          </button>
+        </form>
+
+        <div class="demo-credentials">
+          <p><strong>Demo Credentials:</strong></p>
+          <p>Email: <code>administrator&#64;localhost</code></p>
+          <p>Password: <code>Administrator1!</code></p>
+        </div>
+      </div>
+    </div>
